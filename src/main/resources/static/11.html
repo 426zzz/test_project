@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            border: 0;
+        }
+        #mainDiv{
+            width: 400px;
+            height: 300px;
+            /*margin-left: 481px;*/
+            position: relative;
+            left: 481px;
+            top: 0;
+            overflow: hidden;
+            border: 1px solid rgb(241,241,241);
+            user-select: none;
+        }
+        #picDiv{
+            width: 2000px;
+            height: 300px;
+            position: absolute;
+            top: 0;
+            left: -400px;
+            /*background-color: blue;*/
+        }
+        .imgDiv{
+            float: left;
+        }
+
+
+        #leftImg{
+            position: absolute;
+            top: 125px;
+            left: 457px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid cornflowerblue;
+            transition: all 1s;
+            user-select: none;
+        }
+        #rightImg{
+            position: absolute;
+            top: 125px;
+            left: 883px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid cornflowerblue;
+            transition: all 1s;
+            user-select: none;
+        }
+        #longDiv{
+            width: 312px;
+            height: 50px;
+            position: relative;
+            left: 524px;
+            top: 25px;
+            /*border: 1px solid blue;*/
+            overflow: hidden;
+            align-content: center;
+            user-select: none;
+        }
+        #microPicDiv{
+            width: 520px;
+            height: 46px;
+            position: absolute;
+            left: -104px;
+            top: 0px;
+            /*user-select: none;*/
+        }
+        .smallImgDiv{
+            width: 100px;
+            height: 46px;
+            float: left;
+            opacity: 1;
+            cursor: pointer;
+            border: 2px solid transparent;
+
+        }
+    </style>
+
+    <script src="../js/jquery.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            // alert("test");
+            var i=1;//索引
+            var arr=["micro3","micro1","micro2","micro3","micro1"];//小图片
+
+            //初始化边框的透明度
+            $("#"+arr[2]).css("opacity","0.3");
+            $("#"+arr[3]).css("opacity","0.3");
+            $("#"+arr[i]).parent(this).css("borderColor","gray");
+
+            $("#leftImg").click(bigToLeft);//右切换
+            $("#rightImg").click(bigToRight);//左切换
+            $(".smallImgDiv").click(microClick);//点击小图
+
+            //自动轮播
+            var start;
+            start=setInterval(bigToRight,1500);
+            $("#mainDiv").mouseover(function () {
+                clearInterval(start);
+            });
+            $("#mainDiv").mouseleave(function () {
+                start=setInterval(bigToRight,1500);
+            });
+
+
+            function bigToRight() {
+                if(i==4){
+                    $("#picDiv").animate({"left":"-400"},0);
+                    i=1;
+                }
+                $("#picDiv").animate({
+                    left:(-(i+1))*400
+                },300);
+                i++;
+                $("#"+arr[i]).css("opacity","1");
+                $("#"+arr[i]).parent(this).css("borderColor","gray");
+                $("#"+arr[i-1]).css("opacity","0.3");
+                $("#"+arr[i-1]).parent(this).css("borderColor","transparent");
+            }
+            function bigToLeft(){
+                if(i==0){
+                    $("#picDiv").animate({left:-1200},0);
+                    i=3;
+                }
+                $("#picDiv").animate({
+                    left:((-i)+1)*400
+                },300);
+                i--;
+                $("#"+arr[i]).css("opacity","1");
+                $("#"+arr[i]).parent(this).css("borderColor","gray");
+                $("#"+arr[i+1]).css("opacity","0.3");
+                $("#"+arr[i+1]).parent(this).css("borderColor","transparent");
+            }
+            function microClick(){
+                //小图边框，透明度 索引大图
+                // alert($(this).index())
+
+                //自己的CSS和去掉其他小图的CSS
+                $(this).css({
+                    "borderColor":"gray",
+                    "opacity":"1"
+                });
+                //改变索引
+                i=$(this).index();
+                //改变大图
+                $("#picDiv").animate({
+                    left:-i*400
+                },300);
+
+                $(this).prevAll().css("borderColor","transparent");
+                $(this).prevAll().children().css("opacity","0.3");
+                $(this).nextAll().css("borderColor","transparent");
+                $(this).nextAll().children().css("opacity","0.3");
+            }
+
+
+        });
+    </script>
+
+</head>
+<body id="thisBody">
+
+<div id="mainDiv">
+    <div id="picDiv">
+        <div class="imgDiv"><img src="../img/3.jpg" alt="" width="400px" height="300px"></div>
+        <div class="imgDiv"><img src="../img/1.jpg" alt="" width="400px" height="300px"></div>
+        <div class="imgDiv"><img src="../img/2.jpg" alt="" width="400px" height="300px"></div>
+        <div class="imgDiv"><img src="../img/3.jpg" alt="" width="400px" height="300px"></div>
+        <div class="imgDiv"><img src="../img/1.jpg" alt="" width="400px" height="300px"></div>
+    </div>
+</div>
+
+<div id="longDiv">
+    <div id="microPicDiv">
+        <div class="smallImgDiv"><img src="../img/3.jpg" alt="" width="100%" height="100%"></div>
+        <div class="smallImgDiv"><img src="../img/1.jpg" alt="" width="100%" height="100%" id="micro1"></div>
+        <div class="smallImgDiv"><img src="../img/2.jpg" alt="" width="100%" height="100%" id="micro2"></div>
+        <div class="smallImgDiv"><img src="../img/3.jpg" alt="" width="100%" height="100%" id="micro3"></div>
+        <div class="smallImgDiv"><img src="../img/1.jpg" alt="" width="100%" height="100%"></div>
+    </div>
+
+
+</div>
+
+<img src="../img/zuo.jpg" alt="" width="20px" height="50px" id="leftImg">
+<img src="../img/you.jpg" alt="" width="20px" height="50px" id="rightImg">
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        #p1 {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 24px;
+        }
+        #jump_div{
+            margin-left: 40%;
+            font-size: 12px;
+            color: #ff0000;
+            text-decoration: none;
+            text-decoration: underline;
+        }
+    </style>
+
+    <script type="text/javascript">
+        window.onload=function () {
+            var test=document.getElementById("p1");//得到p标签对象
+            var a = parseInt(test.innerText);//得到p标签值转化为数字
+            var b=document.getElementById("jump");//得到a标签对象
+            var countDown=function () {
+                a--;
+                if(a===0){
+                    clearInterval(si);
+                    location.href="shopCar.html";
+                }
+                test.innerText=a;//将自减后的值放入标签显示出来
+            };
+            var si=setInterval(countDown,1000);
+        }
+    </script>
+
+</head>
+<body>
+    <p id="p1">3</p>
+    <br>
+    <div id="jump_div"><a href="shopCar.html" id="jump">即将跳转，如自动跳转未成功，请手动点击此链接</a></div>
+</body>
+</html>

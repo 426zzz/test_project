@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyShoppingCar</title>、
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #myDiv{
+            width: 1000px;
+            height: auto;
+            margin-left: 12%;
+        }
+        .firLine{
+            height: 30px;
+            width: 200px;
+            border: 1px solid black;
+            border-radius: 6px;
+        }
+        .secLine{
+            text-align: center;
+            height: 130px;
+            width: 200px;
+            border: 1px solid black;
+            border-radius: 6px;
+        }
+        .goodNum{
+            height: 20px;
+            width: 50px;
+            text-align: right;
+        }
+        .jian{
+            /*position: absolute;*/
+            /*top: 97px;*/
+            /*left: 600px;*/
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 1px solid rgb(107,107,107);
+        }
+        .jia{
+            /*position: absolute;*/
+            /*top: 97px;*/
+            /*left: 706px;*/
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 1px solid rgb(107,107,107);
+        }
+    </style>
+
+    <script src="../js/jquery.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            //数量，单价，相应总价赋初值
+            $(".goodNum").attr("value","0");
+            $(".spanInfo").text("0");
+            $("#allPrice").text("0");
+            $("#allPrice").css("color","red");
+
+            // 数量变更
+            function changeNum(obj){
+                // 判断加减
+                if(obj.attr("class") == "jian"){
+                    var a = $(obj).next().val();
+                    if(parseInt(a)!=0){
+                        obj.next().val(parseInt(a)-1);
+                    }else{
+                        obj.next().val("0");
+                    }
+                }else{
+                    var b = obj.prev().val();
+                    obj.prev().val(parseInt(b) + 1);
+                }
+            }
+
+            // 改变对应总价
+            function changeAllPrice1(obj){
+                if(obj.attr("class") == "jian"){
+                    var a1=parseInt(obj.next().val());//当前数量
+                    var a11=parseInt(obj.parent().next().text());//对应单价
+                    //改变对应总价
+                    var a111=a1*a11;
+                    obj.parent().next().next().children("span").text(a111);
+                }else{
+                    var b1 = parseInt(obj.prev().val());//当前数量
+                    var b11 = parseInt(obj.parent().next().text());//对应单价
+                    //改变对应总价
+                    var b111 = b1 * b11;
+                    obj.parent().next().next().children("span").text(b111);
+                }
+            }
+
+            // 总价
+            function getAllPrice(){
+                var allPrice = 0;
+                for(var i=0; i< $(".spanInfo").length; i++){
+                    allPrice = allPrice + parseInt($($(".spanInfo")[i]).text()); // 特别注意此处循环类选择器的写法，要将下标带入$()选择器中
+                }
+                $("#allPrice").text(allPrice);
+            }
+
+            //减号功能
+            $(".jian").click(function () {
+                changeNum($(this));
+                changeAllPrice1($(this));
+                //改变总价
+                getAllPrice();
+
+            });
+            // 加号功能
+            $(".jia").click(function () {
+                changeNum($(this));
+                changeAllPrice1($(this));
+                //改变总价
+                getAllPrice();
+
+            });
+            //自发修改输入框
+            $(".goodNum").blur(function () {
+                var c=$(this).val();
+                if(!/^\d{2}$|^\d$/.test(c)){
+                    $(this).val("");
+                    $(this).focus();
+                    $(this).parent().append($("<span></span>"));
+                    $(this).next().next().css("color","red");
+                    $(this).next().next().css("fontSize","12px");
+                    $(this).next().next().text("数量范围：0-99");
+                }else{
+                    //删除span
+                    $(this).parent().children("span").remove();
+                    //改变对应总价
+                    var c1=parseInt($(this).parent().next().text())*parseInt(c);
+                    $(this).parent().next().next().children("span").text(c1);
+                }
+                //改变总价
+                getAllPrice();
+            })
+
+        });
+
+        // window.onload=function () {
+        //     //给价格默认值
+        //     // var divAll=document.getElementById("myDiv");//body对象
+        //     var numArr=document.getElementsByClassName("goodNum");//商品数量input数组
+        //     var priceSingleArr=document.getElementsByClassName("singlePrice");//商品单价span数组
+        //     var priceAllArr=document.getElementsByClassName("spanInfo");//商品总价span数组
+        //     var finalPrice=document.getElementById("allPrice");//最终总价对象
+        //     var jianArr=document.getElementsByClassName("jian");//减号按钮数组
+        //     var jiaArr=document.getElementsByClassName("jia");//加号按钮数组
+        //     //为数量赋初始值
+        //     for(var pa=0;pa<numArr.length;pa++){
+        //         numArr[pa].value="0";
+        //     }
+        //     //为单行总价赋初始值
+        //     for(var sa=0;sa<priceAllArr.length;sa++){
+        //         var thisPrice=parseInt(numArr[sa].value)*parseInt(priceSingleArr[sa].innerHTML);
+        //         priceAllArr[sa].innerHTML=thisPrice;
+        //     }
+        //     //为最终总价赋初始值
+        //     finalPrice.innerHTML=0;
+        //     finalPrice.style.color="red";
+        //     finalPrice.style.fontFamily="Arial";
+        //     //减号按钮功能,减了后总价也会变
+        //     for(var j1=0; j1<jianArr.length; j1++){
+        //         jianArr[j1].setAttribute("index",j1);//定义一个index属性存放编号，来划分对应按钮
+        //         jianArr[j1].onclick=function () {//仅仅是绑定事件，并没有触发click事件，由于窗口加载完for循环很快结束，等到click时j1已经是最大值了
+        //             //触发click事件首先改变数量框的值
+        //            for(var i1 = 0; i1<numArr.length ; i1++){
+        //                 if(i1 == parseInt(this.getAttribute("index"))){
+        //                     if(parseInt(numArr[i1].value)>0){
+        //                         numArr[i1].value = parseInt(numArr[i1].value) -1;
+        //                         // break;
+        //                     }else if(parseInt(numArr[i1].value)<=0){
+        //                         numArr[i1].value = "0";
+        //                         // break;
+        //                     }
+        //                 }
+        //            }
+        //            //然后改变相应总价的值
+        //            for(var p1 = 0 ; p1<priceAllArr.length ; p1++){
+        //                 if(p1 == parseInt(this.getAttribute("index"))){
+        //                     var price1=parseInt(priceSingleArr[p1].innerHTML)*parseInt(numArr[p1].value);
+        //                     priceAllArr[p1].innerHTML=price1;
+        //                 }
+        //            }
+        //            //最后改变底部总价的值
+        //             var tempPrice=0;
+        //             for(var ap1 = 0 ; ap1<priceAllArr.length ; ap1++){
+        //                  tempPrice+=parseInt(priceAllArr[ap1].innerHTML);
+        //             }
+        //             finalPrice.innerHTML=tempPrice;
+        //         };
+        //     }
+        //     //加号按钮功能,加了后总价也会变
+        //     for(var j2=0; j2<jiaArr.length; j2++){
+        //         jiaArr[j2].setAttribute("index",j2);//定义一个index属性存放编号，来划分对应按钮
+        //         jiaArr[j2].onclick=function () {//仅仅是绑定事件，并没有触发click事件，由于窗口加载完for循环很快结束，等到click时j1已经是最大值了
+        //             //触发click事件首先改变数量框的值
+        //             for(var i2 = 0; i2<numArr.length ; i2++){
+        //                 if(i2 == parseInt(this.getAttribute("index"))){
+        //                     numArr[i2].value = parseInt(numArr[i2].value) +1;
+        //                 }
+        //             }
+        //             //然后改变相应总价的值
+        //             for(var p2 = 0 ; p2<priceAllArr.length ; p2++){
+        //                 if(p2 == parseInt(this.getAttribute("index"))){
+        //                     var price2=parseInt(priceSingleArr[p2].innerHTML)*parseInt(numArr[p2].value);
+        //                     priceAllArr[p2].innerHTML=price2;
+        //                 }
+        //             }
+        //             //最后改变底部总价的值
+        //             var tempAllPrice=0;
+        //             for(var ap2 = 0 ; ap2<priceAllArr.length ; ap2++){
+        //                 tempAllPrice+=parseInt(priceAllArr[ap2].innerHTML);
+        //             }
+        //             finalPrice.innerHTML=tempAllPrice;
+        //         };
+        //     }
+        //     //当自发修改数量框的值后
+        //     for(var k=0 ; k<numArr.length ; k++){
+        //         numArr[k].setAttribute("numindex",k);
+        //         numArr[k].onblur=function () {
+        //             if(!/^\d{2}$|^\d$/.test(this.value)){
+        //                 // alert("请输入0-99间的数字！");
+        //                 console
+        //                 this.value="";
+        //                 this.focus();
+        //             }//否则符合正则改变对应所有总价
+        //             else{
+        //                 //对应行总价
+        //                 for(var k1 = 0 ; k1<priceAllArr.length ; k1++){
+        //                     if(k1 == parseInt(this.getAttribute("numindex"))){
+        //                         var price3=parseInt(priceSingleArr[k1].innerHTML)*parseInt(this.value);
+        //                         priceAllArr[k1].innerHTML=price3;
+        //                     }
+        //                 }
+        //                 //最后改变底部总价的值
+        //                 var tempAllPrice1=0;
+        //                 for(var k2 = 0 ; k2<priceAllArr.length ; k2++){
+        //                     tempAllPrice1+=parseInt(priceAllArr[k2].innerHTML);
+        //                 }
+        //                 finalPrice.innerHTML=tempAllPrice1;
+        //             }
+        //         }
+        //     }
+        // }
+    </script>
+
+</head>
+<body id="myBody">
+<div id="myDiv">
+    <table id="myTable">
+        <tr>
+            <th class="firLine">商品</th>
+            <th class="firLine">描述</th>
+            <th class="firLine">数量</th>
+            <th class="firLine">单价/元</th>
+            <th class="firLine">总价/元</th>
+        </tr>
+
+        <tr>
+            <td class="secLine"><img src="../img/1.jpg" alt="" width="100%" height="100%"></td>
+            <td class="secLine">AAA</td>
+            <td class="secLine">
+                <input type="button" value="-" class="jian">
+                <input type="text" class="goodNum">
+                <input type="button" value="+" class="jia">
+            </td>
+            <td class="secLine"><span class="singlePrice">38</span></td>
+            <td class="secLine"><span class="spanInfo"></span></td>
+        </tr>
+
+        <tr>
+            <td class="secLine"><img src="../img/2.jpg" alt="" width="100%" height="100%"></td>
+            <td class="secLine">BBB</td>
+            <td class="secLine">
+                <input type="button" value="-" class="jian">
+                <input type="text" class="goodNum" value="">
+                <input type="button" value="+" class="jia">
+            </td>
+            <td class="secLine"><span class="singlePrice">68</span></td>
+            <td class="secLine"><span class="spanInfo"></span></td>
+        </tr>
+
+        <tr>
+            <td class="secLine"><img src="../img/3.jpg" alt="" width="100%" height="100%"></td>
+            <td class="secLine">CCC</td>
+            <td class="secLine">
+                <input type="button" value="-" class="jian">
+                <input type="text" class="goodNum" value="">
+                <input type="button" value="+" class="jia">
+            </td>
+            <td class="secLine"><span class="singlePrice">98</span></td>
+            <td class="secLine"><span class="spanInfo"></span></td>
+        </tr>
+
+
+
+    </table>
+    <div id="allPriceDiv">总价：<span id="allPrice"></span> 元</div>
+</div>
+<!--<div class="jian"><input type="button" value="-"></div>-->
+<!--<div class="jia"><input type="button" value="+"></div>-->
+</body>
+</html>
